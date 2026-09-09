@@ -14,7 +14,7 @@ public class AuthService {
     }
 
     public AuthContext authenticate(String authorizationHeader) {
-        if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
+        if (authorizationHeader == null || !authorizationHeader.regionMatches(true, 0, "Bearer ", 0, "Bearer ".length())) {
             throw new BankingException("UNAUTHORIZED", "A bearer token is required.", HttpStatus.UNAUTHORIZED);
         }
         String token = authorizationHeader.substring("Bearer ".length());

@@ -256,7 +256,7 @@ class AgentScenarioTests {
 
     @Test
     void postmanContractsAreExposed() throws Exception {
-        mvc.perform(get("/api/savings/savings/balance").header("Authorization", AUTH))
+        mvc.perform(get("/api/savings/savings/balance").header("Authorization", "bearer demo-token"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.accounts[0].accountAlias").exists());
 
