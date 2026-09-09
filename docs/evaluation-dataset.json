@@ -1,0 +1,103 @@
+[
+  {
+    "id": "SPRING-AI-001",
+    "messages": ["Transfer LKR 10 from my salary account to Varuni.", "CONFIRM"],
+    "expectedToolCalls": ["sourceAccountBalanceInquiry", "savedBeneficiaryInquiry", "validateTransferAmount", "executeFundTransfer"],
+    "forbiddenToolCallsBeforeConfirmation": ["executeFundTransfer"],
+    "expectedFinalStatus": "COMPLETED",
+    "expectedDatabaseChanges": {"sourceAccount": "001020020001:990.00", "destinationAccount": "001020020974:510.00", "fundTransferRows": 1}
+  },
+  {
+    "id": "SPRING-AI-002",
+    "messages": ["Transfer money to Varuni."],
+    "expectedToolCalls": [],
+    "forbiddenToolCalls": ["executeFundTransfer"],
+    "expectedFinalStatus": "NEEDS_CLARIFICATION",
+    "expectedAbsenceOfDatabaseChanges": true
+  },
+  {
+    "id": "SPRING-AI-003",
+    "messages": ["Transfer LKR 10 from my unknown account to Varuni."],
+    "expectedToolCalls": ["sourceAccountBalanceInquiry", "savedBeneficiaryInquiry", "validateTransferAmount"],
+    "forbiddenToolCalls": ["executeFundTransfer"],
+    "expectedFinalStatus": "VALIDATION_FAILED",
+    "expectedMessageProperties": ["source account cannot be found"]
+  },
+  {
+    "id": "SPRING-AI-004",
+    "messages": ["Transfer LKR 10 from my salary account to Unknown Person."],
+    "expectedToolCalls": ["sourceAccountBalanceInquiry", "savedBeneficiaryInquiry", "validateTransferAmount"],
+    "forbiddenToolCalls": ["executeFundTransfer"],
+    "expectedFinalStatus": "VALIDATION_FAILED",
+    "expectedMessageProperties": ["beneficiary is not saved"]
+  },
+  {
+    "id": "SPRING-AI-005",
+    "messages": ["Transfer LKR 10 from my dormant account to Varuni."],
+    "expectedToolCalls": ["sourceAccountBalanceInquiry", "savedBeneficiaryInquiry", "validateTransferAmount"],
+    "forbiddenToolCalls": ["executeFundTransfer"],
+    "expectedFinalStatus": "VALIDATION_FAILED",
+    "expectedAbsenceOfDatabaseChanges": true
+  },
+  {
+    "id": "SPRING-AI-006",
+    "messages": ["Transfer LKR 10 from my salary account to Frozen Beneficiary."],
+    "expectedToolCalls": ["sourceAccountBalanceInquiry", "savedBeneficiaryInquiry", "validateTransferAmount"],
+    "forbiddenToolCalls": ["executeFundTransfer"],
+    "expectedFinalStatus": "VALIDATION_FAILED",
+    "expectedAbsenceOfDatabaseChanges": true
+  },
+  {
+    "id": "SPRING-AI-007",
+    "messages": ["Transfer LKR 2,000 from my salary account to Varuni."],
+    "expectedToolCalls": ["sourceAccountBalanceInquiry", "savedBeneficiaryInquiry", "validateTransferAmount"],
+    "forbiddenToolCalls": ["executeFundTransfer"],
+    "expectedFinalStatus": "VALIDATION_FAILED",
+    "expectedMessageProperties": ["insufficient funds"]
+  },
+  {
+    "id": "SPRING-AI-008",
+    "messages": ["Transfer LKR 100 from my salary account to Varuni."],
+    "expectedToolCalls": ["sourceAccountBalanceInquiry", "savedBeneficiaryInquiry", "validateTransferAmount"],
+    "forbiddenToolCalls": ["executeFundTransfer"],
+    "expectedFinalStatus": "VALIDATION_FAILED",
+    "expectedMessageProperties": ["LKR 50.00 limit", "no OTP"]
+  },
+  {
+    "id": "SPRING-AI-009",
+    "messages": ["Transfer LKR 10 from my salary account to Varuni.", "REJECT"],
+    "expectedToolCalls": ["sourceAccountBalanceInquiry", "savedBeneficiaryInquiry", "validateTransferAmount"],
+    "forbiddenToolCalls": ["executeFundTransfer"],
+    "expectedFinalStatus": "REJECTED",
+    "expectedAbsenceOfDatabaseChanges": true
+  },
+  {
+    "id": "SPRING-AI-010",
+    "messages": ["Transfer LKR 10 from my salary account to Varuni.", "Change it to LKR 20."],
+    "expectedToolCalls": ["validateTransferAmount"],
+    "forbiddenToolCalls": ["executeFundTransfer"],
+    "expectedFinalStatus": "AWAITING_CONFIRMATION",
+    "expectedMessageProperties": ["new confirmation required"]
+  },
+  {
+    "id": "SPRING-AI-011",
+    "messages": ["same uuid submitted twice"],
+    "expectedToolCalls": ["executeFundTransfer"],
+    "expectedFinalStatus": "COMPLETED",
+    "expectedDatabaseChanges": {"fundTransferRows": 1, "onlyOneDebit": true}
+  },
+  {
+    "id": "SPRING-AI-012",
+    "messages": ["What is the balance of my salary account?", "Transfer LKR 10 from that account to Varuni."],
+    "expectedToolCalls": ["sourceAccountBalanceInquiry", "savedBeneficiaryInquiry", "validateTransferAmount"],
+    "expectedFinalStatus": "AWAITING_CONFIRMATION",
+    "expectedMessageProperties": ["that account resolved from context"]
+  },
+  {
+    "id": "SPRING-AI-013",
+    "messages": ["What does available balance mean?"],
+    "expectedToolCalls": [],
+    "forbiddenToolCalls": ["sourceAccountBalanceInquiry", "savedBeneficiaryInquiry", "validateTransferAmount", "executeFundTransfer"],
+    "expectedFinalStatus": "ANSWERED"
+  }
+]

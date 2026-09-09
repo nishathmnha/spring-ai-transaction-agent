@@ -1,0 +1,52 @@
+spring:
+  application:
+    name: spring-ai-transaction-agent
+  datasource:
+    url: jdbc:postgresql://localhost:5432/${POSTGRES_DB:banking_agent}
+    username: ${POSTGRES_USER:root}
+    password: ${POSTGRES_PASSWORD:root}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: false
+        jdbc:
+          time_zone: UTC
+  flyway:
+    enabled: true
+  ai:
+    openai:
+      api-key: ${OPENAI_API_KEY:}
+      chat:
+        options:
+          model: ${OPENAI_MODEL:gpt-4.1-mini}
+          temperature: ${OPENAI_TEMPERATURE:0}
+
+server:
+  port: ${SERVER_PORT:8080}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      probes:
+        enabled: true
+
+banking:
+  demo-token: ${DEMO_AUTH_TOKEN:demo-token}
+  demo-customer-id: CUST001
+  transfer-limit: 50.00
+  pending-transfer-ttl-seconds: ${PENDING_TRANSFER_TTL_SECONDS:300}
+  local-debug-full-account-numbers: ${LOCAL_DEBUG_FULL_ACCOUNT_NUMBERS:false}
+  agent:
+    use-scripted-runtime: ${USE_SCRIPTED_AGENT:false}
+    model-name: ${OPENAI_MODEL:gpt-4.1-mini}
+
+logging:
+  pattern:
+    console: "%d{yyyy-MM-dd'T'HH:mm:ss.SSSXXX} level=%level logger=%logger{36} trace=%X{conversationId:-} request=%X{agentRequestId:-} msg=%msg%n"
